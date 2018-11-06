@@ -3,7 +3,7 @@
 #include "Integer.hpp"
 
 int main() {
-	Integer ob1("-4"), ob2("20");
+	Integer ob1("-1111"), ob2("-999");
 	std::cout <<"ob1 == ob2 ?'\n"<< (ob1 == ob2);
 	std::cout << "\nob1 != ob2 ?'\n" << (ob1 != ob2);
 	std::cout << "\nob1 < ob2 ?'\n" << (ob1 < ob2);
@@ -16,6 +16,8 @@ int main() {
 	std::cout << '\n';
 	
 	std::cout << ob1 << ob2 << '\n';
+
+
 
 	std::cout << "ob1+ob2: ";
 	Integer ob31 = ob1 + ob2;

@@ -1,2 +1,4 @@
-﻿  Source.cpp
+﻿  Integer.cpp
+c:\users\andre\source\repos\project1\project1\integer.cpp(45): warning C4018: '<': signed/unsigned mismatch
+c:\users\andre\source\repos\project1\project1\integer.cpp(53): warning C4018: '<': signed/unsigned mismatch
   Project1.vcxproj -> C:\Users\andre\source\repos\Project1\Debug\Project1.exe

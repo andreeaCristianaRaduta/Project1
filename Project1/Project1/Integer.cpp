@@ -3,16 +3,14 @@
 #include <algorithm>
 #include <math.h>
 
-Integer::Integer(int digits, unsigned char base, char sign)
+Integer::Integer(int digits, char sign, unsigned char base)
 	: mBase(base)
 	,mSign(sign)
 {
+	while (digits) {
 
-	int digitsDuplicate = digits;
-	while (digitsDuplicate) {
-
-		mDigits.push_back((digitsDuplicate % 10) + '0');
-		digitsDuplicate /= 10;
+		mDigits.push_back((digits % 10) + '0');
+		digits /= 10;
 
 	}
 
@@ -24,7 +22,12 @@ Integer::Integer(long long int digits, unsigned char base)
 	: mBase(base)
 {
 
-	mDigits.push_back(digits);
+	while (digits) {
+
+		mDigits.push_back((digits % 10) + '0');
+		digits /= 10;
+
+	}
 }
 
 Integer::Integer(std::string digits, unsigned char base) 
@@ -156,6 +159,7 @@ bool operator==(Integer ob1, Integer ob2) {
 	return false;
 
 }
+
 bool operator==(Integer ob1, int nr) {
 
 	Integer obj(nr);
@@ -164,6 +168,7 @@ bool operator==(Integer ob1, int nr) {
 	return false;
 
 }
+
 bool operator==(int nr, Integer ob1) {
 
 	Integer obj(nr);
@@ -197,6 +202,16 @@ bool operator!=(int nr, Integer ob1) {
 
 bool operator<(Integer ob1, Integer ob2) {
 	int n = ob1.mDigits.size(), m = ob2.mDigits.size();
+
+	if (ob1.mSign == '-' && ob2.mSign == '+')
+		return true;
+
+	if (ob1.mSign == '+'  && ob2.mSign == '-')
+		return false;
+
+	if (ob1.mSign == '-' && ob2.mSign == '-')
+		return !isSmaller(ob1, ob2);
+
 	if (n < m)
 		return true;
 
@@ -216,6 +231,15 @@ bool operator<(Integer ob1, Integer ob2) {
 bool operator<(Integer ob, int nr) {
 
 	Integer obj(nr);
+	if (ob.mSign == '-' && obj.mSign == '+')
+		return true;
+
+	if (ob.mSign == '+'  && obj.mSign == '-')
+		return false;
+
+	if (ob.mSign == '-' && obj.mSign == '-')
+		return !isSmaller(ob, obj);
+
 	if (ob < obj)
 		return true;
 	return false;
@@ -225,6 +249,16 @@ bool operator<(Integer ob, int nr) {
 bool operator<(int nr, Integer ob) {
 
 	Integer obj(nr);
+
+	if (ob.mSign == '-' && obj.mSign == '+')
+		return false;
+
+	if (ob.mSign == '+'  && obj.mSign == '-')
+		return true;
+
+	if (obj.mSign == '-' && ob.mSign == '-')
+		return !isSmaller(obj, ob);
+
 	if (obj < ob)
 		return true;
 	return false;
@@ -233,6 +267,16 @@ bool operator<(int nr, Integer ob) {
 
 bool operator<=(Integer ob1, Integer ob2) {
 	int n = ob1.mDigits.size(), m = ob2.mDigits.size();
+
+	if (ob1.mSign == '-' && ob2.mSign == '+')
+		return true;
+
+	if (ob1.mSign == '+'  && ob2.mSign == '-')
+		return false;
+
+	if (ob1.mSign == '-' && ob2.mSign == '-')
+		return !isSmallerOrEqual(ob1, ob2);
+
 	if (n < m)
 		return true;
 
@@ -252,6 +296,16 @@ bool operator<=(Integer ob1, Integer ob2) {
 bool operator<=(Integer ob, int nr) {
 
 	Integer obj(nr);
+
+	if (ob.mSign == '-' && obj.mSign == '+')
+		return true;
+
+	if (ob.mSign == '+'  && obj.mSign == '-')
+		return false;
+
+	if (ob.mSign == '-' && obj.mSign == '-')
+		return !isSmallerOrEqual(ob, obj);
+
 	if (ob <= obj)
 		return true;
 	return false;
@@ -261,6 +315,16 @@ bool operator<=(Integer ob, int nr) {
 bool operator<=(int nr, Integer ob) {
 
 	Integer obj(nr);
+
+	if (ob.mSign == '-' && obj.mSign == '+')
+		return false;
+
+	if (ob.mSign == '+'  && obj.mSign == '-')
+		return true;
+
+	if (obj.mSign == '-' && ob.mSign == '-')
+		return !isSmallerOrEqual(obj, ob);
+
 	if (obj <= ob)
 		return true;
 	return false;
@@ -270,6 +334,16 @@ bool operator<=(int nr, Integer ob) {
 bool operator>(Integer ob1, Integer ob2) {
 
 	int n = ob1.mDigits.size(), m = ob2.mDigits.size();
+
+	if (ob1.mSign == '-' && ob2.mSign == '+')
+		return false;
+
+	if (ob1.mSign == '+'  && ob2.mSign == '-')
+		return true;
+
+	if (ob1.mSign == '-' && ob2.mSign == '-')
+		return isSmaller(ob1, ob2);
+
 	if (n < m)
 		return false;
 
@@ -290,6 +364,16 @@ bool operator>(Integer ob1, Integer ob2) {
 bool operator>(Integer ob, int nr) {
 
 	Integer obj(nr);
+
+	if (ob.mSign == '-' && obj.mSign == '+')
+		return false;
+
+	if (ob.mSign == '+'  && obj.mSign == '-')
+		return true;
+
+	if (ob.mSign == '-' && obj.mSign == '-')
+		return isSmaller(ob, obj);
+
 	if (ob > obj)
 		return true;
 	return false;
@@ -299,6 +383,16 @@ bool operator>(Integer ob, int nr) {
 bool operator>(int nr, Integer ob) {
 
 	Integer obj(nr);
+
+	if (ob.mSign == '-' && obj.mSign == '+')
+		return true;
+
+	if (ob.mSign == '+'  && obj.mSign == '-')
+		return false;
+
+	if (obj.mSign == '-' && ob.mSign == '-')
+		return isSmaller(obj, ob);
+
 	if (obj > ob)
 		return true;
 	return false;
@@ -308,6 +402,16 @@ bool operator>(int nr, Integer ob) {
 bool operator>=(Integer ob1, Integer ob2){
 
 	int n = ob1.mDigits.size(), m = ob2.mDigits.size();
+
+	if (ob1.mSign == '-' && ob2.mSign == '+')
+		return false;
+
+	if (ob1.mSign == '+'  && ob2.mSign == '-')
+		return true;
+
+	if (ob1.mSign == '-' && ob2.mSign == '-')
+		return isSmallerOrEqual(ob1, ob2);
+
 	if (n < m)
 		return false;
 
@@ -328,6 +432,16 @@ bool operator>=(Integer ob1, Integer ob2){
 bool operator>=(Integer ob, int nr) {
 
 	Integer obj(nr);
+
+	if (ob.mSign == '-' && obj.mSign == '+')
+		return false;
+
+	if (ob.mSign == '+'  && obj.mSign == '-')
+		return true;
+
+	if (ob.mSign == '-' && obj.mSign == '-')
+		return isSmallerOrEqual(ob, obj);
+
 	if (ob >= obj)
 		return true;
 	return false;
@@ -337,10 +451,73 @@ bool operator>=(Integer ob, int nr) {
 bool operator>=(int nr, Integer ob) {
 
 	Integer obj(nr);
+
+	if (ob.mSign == '-' && obj.mSign == '+')
+		return true;
+
+	if (ob.mSign == '+'  && obj.mSign == '-')
+		return false;
+
+	if (obj.mSign == '-' && ob.mSign == '-')
+		return isSmallerOrEqual(obj, ob);
+
 	if (obj >= ob)
 		return true;
 	return false;
 
+}
+
+Integer operator+(const Integer&ob) {
+
+	return ob;
+
+}
+
+Integer operator-(const Integer&ob) {
+
+	Integer obDuplicate(ob);
+	if (obDuplicate.getSign() == '-')
+		obDuplicate.setSign('+');
+	else
+		obDuplicate.setSign('-');
+	return obDuplicate;
+
+}
+
+bool isSmaller(Integer ob1, Integer ob2) {
+	int n = ob1.mDigits.size(), m = ob2.mDigits.size();
+	if (n < m)
+		return true;
+
+	if (m < n)
+		return false;
+
+	for (int i = 0; i < n; i++) {
+		if (ob1.mDigits[i] < ob2.mDigits[i])
+			return true;
+		if (ob1.mDigits[i] > ob2.mDigits[i])
+			return false;
+	}
+
+	return false;
+}
+
+bool isSmallerOrEqual(Integer ob1, Integer ob2) {
+	int n = ob1.mDigits.size(), m = ob2.mDigits.size();
+	if (n < m)
+		return true;
+
+	if (m < n)
+		return false;
+
+	for (int i = 0; i < n; i++) {
+		if (ob1.mDigits[i] < ob2.mDigits[i])
+			return true;
+		if (ob1.mDigits[i] > ob2.mDigits[i])
+			return false;
+	}
+
+	return true;
 }
 
 Integer operator+(Integer ob1,const Integer& ob2) {
@@ -447,7 +624,7 @@ Integer operator-(Integer ob1, const Integer& ob2) {
 	int aux;
 
 	if (ob1.mSign == ob2Duplicate.mSign) {
-		if (ob1 < ob2Duplicate) {
+		if (isSmaller(ob1, ob2Duplicate)) {
 			if( ob2Duplicate.mSign == '-')
 				minus.mSign = '+';
 			else minus.mSign = '-';
@@ -614,7 +791,7 @@ Integer operator/(Integer ob1, const Integer & ob2){
 	ob1Duplicate.mSign = '+';
 	ob2Duplicate.mSign = '+';
 	
-	while (ob2Duplicate <= ob1Duplicate) {
+	while (isSmallerOrEqual(ob2Duplicate, ob1Duplicate)) {
 
 		ob1Duplicate = ob1Duplicate - ob2Duplicate;
 		count++;
@@ -721,7 +898,6 @@ std::ostream& operator<<(std::ostream& out, Integer &inti){
 }
 
 std::istream& operator>>(std::istream& in, Integer &inti){         
-	std::cout << "Introdu numarul: ";
 	in >> inti.mSign;
 	char digit;
 	inti.mDigits.pop_back();
@@ -732,6 +908,3 @@ std::istream& operator>>(std::istream& in, Integer &inti){
 	return in;
 
 }
-
-
-

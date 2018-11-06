@@ -6,7 +6,7 @@ class Integer {
 
 public:
 
-	Integer(int digits = 0, unsigned char base = 10, char sign = '+');
+	Integer(int digits = 0, char sign = '+', unsigned char base = 10);
 
 	Integer(long long int digits, unsigned char base = 10);
 
@@ -48,6 +48,10 @@ public:
 	friend bool operator>=(Integer ob1, Integer ob2);
 	friend bool operator>=(Integer ob, int nr);
 	friend bool operator>=(int nr, Integer ob);
+	friend Integer operator+(const Integer&ob);
+	friend Integer operator-(const Integer&ob);
+	friend bool isSmaller(Integer ob1, Integer ob2);
+	friend bool isSmallerOrEqual(Integer ob1, Integer ob2);
 	friend Integer operator+(Integer ob1,const Integer &ob2);
 	friend Integer operator+(Integer ob, int nr);
 	friend Integer operator+(int nr, Integer ob);
